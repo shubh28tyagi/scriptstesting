@@ -10,15 +10,18 @@
     h.src = w;
     rx.parentNode.insertBefore(h, rx);
   })(window, document, "script", "https://static.growthrx.in/js/v2/web-sdk.js", "grx");
+  const version = window?.buildVersion;
+  const pagetype = window?.pageType;
+  const { analyticsConfig, projectId, platform } = window?.analyticsConfig || {};
   console.log("GrowthRx is working");
   grx('config','applicationServerKey','BDp8pYlqIqwIZw0JLBj91Phfr4w0tNxcmtYtcpVxYinzQIWcTkxHAoDj_GYhxgG_zEluRkkcQrC7sOpyZWAoJ3k'); //We need to use the same key as izooto currently uses
-  grx('config','service_worker','/service-worker.js?v=d82dc58e1acde01d881d')
+  grx('config','service_worker','/service-worker.js?v=' + version)
   grx('config','notification_params', {utm_source:"GrowthRx", utm_medium:"push_notifications"});
-  grx("init", "ge3cad4f9");
-  if(window.location.pathname && (!window.location.pathname.includes('videoshow') || true)) {
+  grx("init", projectId);
+  if(window.location.pathname && (!window.location.pathname.includes('videoshow') || window?.isLitePage)) {
     var _grxLandingPageEventDetails =  {
       url: window.location.pathname,
-      screen_type: "articleshow",
+      screen_type: pagetype,
       location: window.geoinfo ? window.geoinfo.city : "blank" ,
     }
     var _bandwidthAccordingSpeed = function bandwidthAccordingSpeed(speed, rtt) {
@@ -59,10 +62,10 @@
           _grxLandingPageEventDetails.network_browser_effective_type = _bandwidthAccordingSpeed(window.navigator.connection.downlink, window.navigator.connection.rtt);
         }
     }
-    if("articleshow" == "videoshow" || "articleshow" == "articleshow" || "articleshow" == "moviereview" || "articleshow" == "photoshow") {
+    if(pagetype == "videoshow" || pagetype == "articleshow" || pagetype == "moviereview" || pagetype == "photoshow") {
       // Split pathname to get location and msid of article
       // Eg ["/metro/mumbai/other-news/bmc-has-started-preparatiâ€¦izens-extra-bed-in-hospitals-during-corona-crisis", "81757096.cms"]
-      const [pageLocation, _] = window.location.pathname.split("/articleshow/");
+      const [pageLocation, _] = window.location.pathname.split('/'+ pagetype +'/');
 
       // Remove seolocation by splitting against last "/"
       // Eg "/metro/mumbai/other-news"
@@ -78,7 +81,7 @@
       });
     }
     if(typeof Notification === "function" && Notification.permission) {
-        _grxLandingPageEventDetails.status = "mobile"+"_"+Notification.permission ;
+        _grxLandingPageEventDetails.status = platform+"_"+Notification.permission ;
     }
     var userCity = window.localStorage.getItem("selectedCityName");
     if(userCity && userCity !== "undefined"){
@@ -97,25 +100,57 @@
       : document.referrer && document.referrer.length > 0
       ? "others" : "unknown";
     }
+    const { photoFeature, isPrime, editorName, asVideoType, agencyName, gtmId } = window?.analyticsConfig || {};
+
     console.log("GA is working");
     (function(w,d,s,l,i){w[l]=w[l]||[];
-      ;
+      if(photoFeature === "photoFeature"){
+        w[l].push(
+          {'event': 'tvc_photofeature_article', 'photofeature_article': "Yes"}
+        );
+      }
       // Custom dimension for personalization_eligible LAN-10980
       if(true)
         var isForyouuser = w && w.localStorage && w.localStorage.getItem("isForyouuser");
-      if(isForyouuser === "true" && true) {
-        ;
+      if(isForyouuser === "true" && true && pagetype === "videoshow") {
+        "w[l].push({'personalization_eligible':'personalised-user'})";
       }
-      if(isForyouuser === "true" && true)
-                w[l].push({'event': 'authorNamePushed','authorName': 'hrishikesh-singh' ,'video_type': 'non-video', 'agency_name': 'Lipi', 'personalization_eligible':'personalised-user'})
-              else
-                w[l].push({'event': 'authorNamePushed','authorName': 'hrishikesh-singh' ,'video_type': 'non-video', 'agency_name': 'Lipi'});
+   
+      if (pagetype === "articleshow" || pagetype === "photoshow" || pagetype === "moviereview" || (isLitePage && pagetype === "videoshow")) {
+        var eventData = {
+        'event': 'authorNamePushed',
+        'authorName': editorName,
+        'video_type': asVideoType,
+        'agency_name': agencyName
+        };
+       
+        if (isForyouuser === "true" && enableForYouPage()) {
+         eventData['personalization_eligible'] = 'personalised-user';
+        }
+       
+        w[l].push(eventData);
+       } else if (pagetype !== "videoshow") {
+        if (isForyouuser === "true" && enableForYouPage()) {
+         w[l].push({
+          'event': 'pageview',
+          'personalization_eligible': 'personalised-user'
+         });
+        }
+       }
       
-      ;
+       if (isPrime && (pagetype === "articleshow" || pagetype === "videoshow")) {
+        w[l].push({
+          'event': 'authorNamePushed', 
+          'articleType': "non-plus-" + pagetype, 
+          'article_referral': getReferrer()
+        });
+      };
+
+
       w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
       var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=false;
       j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-NS5K3GZ');
+    })(window,document,'script','dataLayer',gtmId);
   window.addEventListener('load', function() {
     console.log("Comscore and Ibeat is working");
     function checkGDPRRegion(){
@@ -140,6 +175,7 @@
         
   var csucfr = "";
   var isGDPRRegion = window.geoinfo && window.geoinfo.isGDPRRegion || false;
+  const pthname = window?.location?.pathname || "/";
   // console.log("geoinfo-------------",window.geoinfo,isGDPRRegion);
   if (getCookie("ckns_policyV2") && isGDPRRegion) {
     csucfr = "&cs_ucfr=1";
@@ -147,7 +183,7 @@
   if (self.COMSCORE && self.COMSCORE.beacon && objComScore) {
     COMSCORE.beacon(objComScore);
   } else {
-    document.getElementById("comscoreContainer").innerHTML = '<img src=https://sb.scorecardresearch.com/p?c1=2&c2=6036484&c4=/state/bihar/patna/pm-narendra-modi-america-visit-and-nitish-kumar-opposition-meeting-in-patna/articleshow/101130733.cms&c7=/state/bihar/patna/pm-narendra-modi-america-visit-and-nitish-kumar-opposition-meeting-in-patna/articleshow/101130733.cms&c9='+ csucfr +' />'
+    document.getElementById("comscoreContainer").innerHTML = '<img src=https://sb.scorecardresearch.com/p?c1=2&c2=6036484&c4='+ pthname +'&c7='+ pthname +'&c9='+ csucfr +' />'
   };
         if(window && window.geoinfo){
           if(!window.geoinfo.isGDPRRegion){
@@ -185,6 +221,7 @@
       
   var csucfr = "";
   var isGDPRRegion = window.geoinfo && window.geoinfo.isGDPRRegion || false;
+  const pthname = window?.location?.pathname || "/";
   // console.log("geoinfo-------------",window.geoinfo,isGDPRRegion);
   if (getCookie("ckns_policyV2") && isGDPRRegion) {
     csucfr = "&cs_ucfr=1";
@@ -192,7 +229,7 @@
   if (self.COMSCORE && self.COMSCORE.beacon && objComScore) {
     COMSCORE.beacon(objComScore);
   } else {
-    document.getElementById("comscoreContainer").innerHTML = '<img src=https://sb.scorecardresearch.com/p?c1=2&c2=6036484&c4=/state/bihar/patna/pm-narendra-modi-america-visit-and-nitish-kumar-opposition-meeting-in-patna/articleshow/101130733.cms&c7=/state/bihar/patna/pm-narendra-modi-america-visit-and-nitish-kumar-opposition-meeting-in-patna/articleshow/101130733.cms&c9='+ csucfr +' />'
+    document.getElementById("comscoreContainer").innerHTML = '<img src=https://sb.scorecardresearch.com/p?c1=2&c2=6036484&c4='+ pthname +'&c7='+ pthname +'&c9='+ csucfr +' />'
   };
       if(window.geoinfo && !window.geoinfo.isGDPRRegion){
         
@@ -222,4 +259,4 @@
   
       }
     }
-  });
+  }) 
