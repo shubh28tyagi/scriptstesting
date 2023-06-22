@@ -57,7 +57,7 @@
   return wapads;
 };
       window.wapads = wapadsGenerator({
-        secname : window.meta.adsec,
+        secname : window.meta && window.meta.adsec,
         defaultWapAds : window.wapads,
         pagetype : window.current_pagetype
       });
