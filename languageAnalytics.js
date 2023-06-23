@@ -1,3 +1,4 @@
+try {
 (function(g, r, o, w, t, h, rx) {
     (g[t] =
       g[t] ||
@@ -88,7 +89,16 @@
       _grxLandingPageEventDetails.exact_location = userCity;
     }
     grx("track", "page_view",_grxLandingPageEventDetails);
-  }function getReferrer(){
+  }
+}
+catch(err) {
+ console.log("Error in GrowthRx", err);
+}
+
+//----------------------------------------------------------------------------------------------------//
+
+  try {
+    function getReferrer(){
       return document.referrer == "" ? "direct" : document.referrer.indexOf("facebook") != -1
       ? "facebook"
       : document.referrer.indexOf("google") != -1
@@ -151,6 +161,14 @@
       var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=false;
       j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer',gtmId);
+}
+catch(err) {
+ console.log("Error in GTM", err);
+}
+
+//----------------------------------------------------------------------------------------------------//
+
+try {
   window.addEventListener('load', function() {
     console.log("Comscore and Ibeat is working");
     function checkGDPRRegion(){
@@ -260,3 +278,7 @@
       }
     }
   }) 
+}
+catch(err) {
+ console.log("Error in Comscoe Ibeat", err);
+}
