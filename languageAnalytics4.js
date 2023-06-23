@@ -247,8 +247,7 @@ try {
                         scriptLoad = document.createElement("script");
                         scriptLoad.defer = true;
                         scriptLoad.src = ('development' != "production" ? "https://agi-static.indiatimes.com/cms-common/stg/stg-ibeat.min.js" : "https://agi-static.indiatimes.com/cms-common/ibeat.min.js")
-                        document.getElementById("devicerelatedjs-script").before(scriptLoad)
-
+                        document.getElementById("comscoreContainer").before(scriptLoad);
                     }
                 }
                 setCookie("geo_data", JSON.stringify(window.geoinfo), 1, "/");
