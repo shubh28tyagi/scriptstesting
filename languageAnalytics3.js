@@ -186,7 +186,7 @@ catch (err) {
 //----------------------------------------------------------------------------------------------------//
 
 try {
-    window.addEventListener('load', function() {
+    (function() {
         console.log("Comscore and Ibeat is working");
 
         function checkGDPRRegion() {
@@ -297,7 +297,7 @@ try {
 
             }
         }
-    })
+    })();
 } catch (err) {
     console.log("Error in Comscoe Ibeat", err);
 }
