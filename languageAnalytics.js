@@ -141,6 +141,7 @@ try {
                 "w[l].push({'personalization_eligible':'personalised-user'})";
             }
 
+        const pagetype = window?.pageType;
             if (pagetype === "articleshow" || pagetype === "photoshow" || pagetype === "moviereview" || (window?.isLitePage) && pagetype === "videoshow") {
             var eventData = {
                 'event': 'authorNamePushed',
