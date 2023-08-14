@@ -430,4 +430,4 @@ const adshelper = new AdsHelper({
 });
 
 adshelper.initialize();
-adshelper.collectAllElems();c
+adshelper.collectAllElems();
