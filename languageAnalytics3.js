@@ -302,7 +302,7 @@ try {
     console.log("Error in Comscoe Ibeat", err);
 }
 ---------------------------------------------------------------------------------------------------------------
-function fireComscore() {
+window.fireComscore = function fireComscore() {
   console.log("fireComscore is working");
   const isGDPRRegion = (window.geoinfo && window.geoinfo.isGDPRRegion) || false;
   let csucfr = "";
@@ -322,4 +322,4 @@ function fireComscore() {
     .catch(error => {
       console.log("Error fetching Scorecard Research URL:", error);
     });
-}
+};
