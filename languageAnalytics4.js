@@ -301,7 +301,7 @@ try {
 } catch (err) {
     console.log("Error in Comscoe Ibeat", err);
 }
----------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 window.fireComscore = function fireComscore() {
   console.log("fireComscore is working");
   const isGDPRRegion = (window.geoinfo && window.geoinfo.isGDPRRegion) || false;
