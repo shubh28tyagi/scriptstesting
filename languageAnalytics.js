@@ -219,7 +219,8 @@ try {
                 }
                 if (self.COMSCORE && self.COMSCORE.beacon && objComScore) {
                     COMSCORE.beacon(objComScore);
-                } else {
+                };
+                if(document.getElementById("comscoreContainer")){
                     document.getElementById("comscoreContainer").innerHTML = '<img src=https://sb.scorecardresearch.com/p?c1=2&c2=6036484&c4=' + pthname + '&c7=' + pthname + '&c9=' + csucfr + ' />'
                 };
                 if (window && window.geoinfo) {
@@ -265,7 +266,8 @@ try {
             }
             if (self.COMSCORE && self.COMSCORE.beacon && objComScore) {
                 COMSCORE.beacon(objComScore);
-            } else {
+            };
+            if(document.getElementById("comscoreContainer")){
                 document.getElementById("comscoreContainer").innerHTML = '<img src=https://sb.scorecardresearch.com/p?c1=2&c2=6036484&c4=' + pthname + '&c7=' + pthname + '&c9=' + csucfr + ' />'
             };
             if (window.geoinfo && !window.geoinfo.isGDPRRegion) {
@@ -301,25 +303,3 @@ try {
 } catch (err) {
     console.log("Error in Comscoe Ibeat", err);
 }
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-window.fireComscore = function fireComscore() {
-  console.log("fireComscore is working");
-  const isGDPRRegion = (window.geoinfo && window.geoinfo.isGDPRRegion) || false;
-  let csucfr = "";
-  const pthname = window?.location?.pathname || "/";
-  if (window?.getCookie("ckns_policyV2") && isGDPRRegion) {
-    csucfr = "&cs_ucfr=1";
-  }
-  const scorecardResearchURL = `https://sb.scorecardresearch.com/p?c1=2&c2=6036484&c4=${pthname}&c7=${pthname}&c9=${csucfr}`;
-  fetch(scorecardResearchURL)
-    .then(response => {
-      if (response.ok) {
-        console.log("Scorecard Research URL fetched successfully");
-      } else {
-        console.log("Failed to fetch Scorecard Research URL");
-      }
-    })
-    .catch(error => {
-      console.log("Error fetching Scorecard Research URL:", error);
-    });
-};
