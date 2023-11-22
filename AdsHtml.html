@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<head>
+    <meta title="Adstesting" />
+    <script src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/gh/shubh28tyagi/scriptstesting/AdsScript.js" ></script>
+    <!-- <script defer src="https://cdn.jsdelivr.net/gh/shubh28tyagi/scriptstesting/TestingAds1.js" ></script> -->
+    <style>
+        .prerender{
+            height: 300px;
+            width: 350px;
+            border: 2px solid black;
+            margin : 10px;
+        }
+        .btn{
+            border: 2px black solid;
+            padding: 5px;
+            background-color: mediumspringgreen;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function changeAds() {
+        if(typeof AdsHelper == "function"){
+          const config = {
+            enableSRA: false,
+            targeting: {
+                "scn": "sports",
+                "subSCN": "football",
+                "BL": "1"
+            },
+            enableLazyLoad: false,
+            secName: "tech",
+           };
+
+           const adElemsInfo =[{
+              "divId": "test1",
+              "adPath":"/7176/NBT_MWeb/NBT_MWeb_Tech/NBT_Mweb_Tech_MREC1",
+              "size":"[300, 250]"
+            },
+            {
+              "divId": "test2",
+              "adPath":"/7176/NBT_MWeb/NBT_MWeb_Tech/NBT_Mweb_Tech_MREC2",
+              "size":"[300, 250]"
+            },
+            {
+              "divId": "test3",
+              "adPath":"/7176/NBT_MWeb/NBT_MWeb_Tech/NBT_Mweb_Tech_MREC3",
+              "size":"[300, 250]"
+            },
+            {
+              "divId": "test4",
+              "adPath":"/7176/NBT_MWeb/NBT_MWeb_Tech/NBT_Mweb_Tech_MREC4",
+              "size":"[300, 250]"
+            }]
+
+            adshelper.updateConfig(config);
+            adshelper.displayAds(adElemsInfo);
+        }
+        }
+    </script>
+    <script>
+        setTimeout(()=>{
+          const div = document.createElement('div');
+          div.setAttribute('id', 'test5');
+          div.setAttribute('class', 'prerender');
+          div.setAttribute('data-path', "/7176/NBT_MWeb/NBT_MWeb_homepage/NBT_Mweb_homepage_MREC5");
+          div.setAttribute('data-size', "[300, 250]");
+
+          document.body.appendChild(div);
+
+          const adElemsInfo =[{
+              "divId": "test5",
+              "adPath":"/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_MREC5",
+              "size":"[300, 250]"
+            }];
+
+        adshelper.displayAds(adElemsInfo);
+        }, 5000);
+    </script>
+    <span>Testing the ads</span>
+    <btn class="btn" onClick="changeAds()">Update Ad</btn>
+    <div id="test1" class="prerender" data-path="/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_MREC1" data-size="[300, 250]" ></div>
+    <div id="test2" class="prerender" data-path="/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_MREC2" data-size="[300, 250]" ></div>
+    <div id="test3" class="prerender" mstype="mrec3" ></div>
+    <div id="test4" class="prerender" mstype="mrec4" ></div>
+
+</body>
