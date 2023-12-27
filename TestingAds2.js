@@ -166,14 +166,8 @@ AdsGenerator.prototype.lazyLoadAds = function() {
 /**
  * @returns Function to create Ad from an Ad Slot
  */
-AdsGenerator.prototype.createAd = function(index) {
+AdsGenerator.prototype.createAd = function() {
     this.enableServices();
-    if (index == 1) {
-        this.addSlotLevelTargeting({
-            "color": "green",
-            "test": "privacy"
-        });
-    }
     this.displaySlot();
 };
 
@@ -222,8 +216,10 @@ AdsHelper.prototype.initialize = function() {
     const initializeAd = new AdsGenerator();
     const config = this.getConfig();
     const { adsData, secName } = config ;
-    const newAdsData = wapAdsGenerator(adsData, secName);
-    config.adsData = newAdsData;
+    if(adsData){
+       const newAdsData = wapAdsGenerator(adsData, secName);
+       config.adsData = newAdsData;
+    }
     const adsMap = new Map();
     adsMap.set("initialAd", initializeAd);
     config.adsMap = adsMap;
@@ -240,20 +236,23 @@ AdsHelper.prototype.initialize = function() {
 AdsHelper.prototype.updateConfig = function(newConfig) {
     const config = this.getConfig();
     const initializeAd = config?.adsMap.get("initialAd");
+    const addTargeting = newConfig.addTargeting;
 
-    if(newConfig?.targeting){
+    if(!addTargeting){
         initializeAd.clearPageLevelTargeting();
+    }
+    if(newConfig?.targeting){
         initializeAd.addPageLevelTargeting(newConfig.targeting);
     }
-
     if (newConfig?.enableLazyLoad) {
         initializeAd.lazyLoadAds();
     }
     const { secName } = newConfig ;
-    const  oldSecname = config.secName;
-    const newAdsData = wapAdsGenerator(config.adsData, secName, oldSecname);
-
-    newConfig.adsData = newAdsData;
+    if(secName){
+      const  oldSecname = config.secName;
+      const newAdsData = wapAdsGenerator(config.adsData, secName, oldSecname);
+      newConfig.adsData = newAdsData;
+    }
     this.setConfig(newConfig);
 }
 
@@ -273,161 +272,52 @@ const wapAdsGenerator = (adsData, newSecName, oldSecName = "others") => {
 /**
  * @returns Function to create Ads based on prerender class
  */
-AdsHelper.prototype.collectAllElems = function() {
-    let allAdElems = document.getElementsByClassName("prerender");
+AdsHelper.prototype.displayAds = function(adElemsInfo) {
+    // let allAdElems = document.getElementsByClassName("prerender");
     let config = this.getConfig();
     const { enableSRA, adsData, adsMap } = config || {};
     let _SRAAdSlots = [];
 
-    const createDivId = (elem, adData) => {
-        if(elem && adData){
-            const id = adData?.id + Math.floor((Math.random() * 100) + 1);
-            elem.setAttribute("id", id);
-            return id;
-        }
-    }
+    if(Array.isArray(adElemsInfo) && adElemsInfo.length>0){
+        for(let i in adElemsInfo){
+            const adInfo = adElemsInfo[i];
+            const { adPath, divId, size } = adInfo || {};
+            if(adPath && divId && size){
+                if(adsMap && adsMap.has(divId)){
+                    const adObj = adsMap.get(divId);
+                    adObj.destroySlot();
+                }
 
-    if (allAdElems.length > 0) {
-        for (let i = 0; i < allAdElems.length; i++) {
-            const adElem = allAdElems[i];
+                const adSlot = new AdsGenerator(adPath, JSON.parse(size), divId);
+                config.adsMap.set(divId, adSlot);
 
-            const mstype = adElem.getAttribute("mstype");
-            const specificAdData = adsData && adsData[mstype];
-
-            const path = adElem.getAttribute("data-path") || specificAdData && specificAdData.name;
-            const id = adElem.getAttribute("id") || createDivId(adElem, specificAdData);
-            const size = JSON.parse(adElem.getAttribute("data-size")) || specificAdData && specificAdData.size;
-
-            if(adsMap && adsMap.has(id)){
-                const adObj = adsMap.get(id);
-                adObj.destroySlot();
-            }
-
-            const adSlot = new AdsGenerator(path, size, id);
-            config.adsMap.set(id, adSlot);
-
-            if (!enableSRA) {
-                adSlot.createAd(i);
-            } else {
-                _SRAAdSlots.push(adSlot);
-                if (i == 0) {
-                    firstSRAAdSlot = adSlot;
+                if (!enableSRA) {
+                  adSlot.createAd();
+                } else {
+                  _SRAAdSlots.push(adSlot);
                 }
             }
         }
 
-        if (enableSRA) {
-            firstSRAAdSlot.displaySlotSRA(_SRAAdSlots);
+        if (enableSRA && _SRAAdSlots.length > 0) {
+           _SRAAdSlots[0].displaySlotSRA(_SRAAdSlots);
         }
     }
 }
 
-const adshelper = new AdsHelper({
-    enableSRA: false,
-    targeting: {
-        "scn": "news",
-        "subSCN": "cricket",
-        "BL": "0"
-    },
-    enableLazyLoad: false,
-    adsData : {
-        atf: {
-          id: "div-gpt-ad-9135510865388-0",
-          name: "/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_ATF",
-          size: [
-            [300, 250],
-            [320, 100],
-            [320, 50],
-            [336, 280],
-            [250, 250],
-            [300, 50],
-          ],
-        },
-        fbn: {
-          id: "div-gpt-ad-9135510865388-2",
-          name: "/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_FBN",
-          size: [
-            [320, 50],
-            [300, 50],
-          ],
-        },
-        mrec1: {
-          id: "div-gpt-ad-9135510865388-mrec1",
-          name: "/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_MREC1",
-          size: [
-            [336, 280],
-            [320, 250],
-            [300, 250],
-            [250, 250],
-            [200, 200],
-            [180, 150],
-          ],
-        },
-        mrec2: {
-          id: "div-gpt-ad-9135510865388-mrec2",
-          name: "/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_MREC2",
-          size: [
-            [336, 280],
-            [320, 250],
-            [300, 250],
-            [250, 250],
-            [200, 200],
-            [180, 150],
-          ],
-        },
-        mrec3: {
-          id: "div-gpt-ad-9135510865388-mrec3",
-          name: "/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_MREC3",
-          size: [
-            [336, 280],
-            [320, 250],
-            [300, 250],
-            [250, 250],
-            [200, 200],
-            [180, 150],
-          ],
-        },
-        mrec4: {
-          id: "div-gpt-ad-9135510865388-mrec4",
-          name: "/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_MREC4",
-          size: [
-            [336, 280],
-            [320, 250],
-            [300, 250],
-            [250, 250],
-            [200, 200],
-            [180, 150],
-          ],
-        },
-        mrecinf: {
-          id: "div-gpt-ad-9135510865388-mrecInf",
-          name: "/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_MrecINF",
-          size: [
-            [336, 280],
-            [320, 250],
-            [300, 250],
-            [250, 250],
-            [200, 200],
-            [180, 150],
-          ],
-        },
-        slug: {
-          id: "div-gpt-ad-9135510865388-slug",
-          name: "/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_Slug1",
-          size: [
-            [300, 100],
-            [320, 100],
-          ],
-        },
-        parallax: {
-          id: "div-gpt-ad-9135510865388-parallax",
-          name: "/7176/NBT_Mweb/NBT_Mweb_Others/NBT_Mweb_Others_FC",
-          size: [[300, 600]],
-        },
-        refreshnews: "/7176/NBT_MWeb/NBT_Mweb_News/NBT_Mweb_News",
-      },
-    secName: "homepage"
-});
-
-adshelper.initialize();
-adshelper.collectAllElems();
+/**
+ * @returns Function to destroy Ad Slots
+ */
+AdsHelper.prototype.destroyAdSlots = function(divInfo){
+    if(Array.isArray(divInfo) && divInfo.length>0){
+        let config = this.getConfig();
+        for(let i in divInfo){
+            const { adsMap } = config; 
+            const adSlot = adsMap.get(divInfo[i]);
+          if(adSlot){
+            adSlot.destroySlot();
+            adsMap.delete(divInfo[i]);
+          }
+        }
+    }
+}
