@@ -21,7 +21,7 @@
 </head>
 <body>
     <script>
-        function changeAds() {
+      setTimeout(()=> {
         if(typeof AdsHelper == "function"){
           const config = {
             enableSRA: false,
@@ -53,31 +53,22 @@
               "divId": "test4",
               "adPath":"/7176/NBT_MWeb/NBT_MWeb_Tech/NBT_Mweb_Tech_MREC4",
               "size":"[300, 250]"
-            }]
+            }];
+
+            const targetingValues = config;
+            const adshelper = new AdsHelper({
+                  enableSRA: true,
+                  targeting: targetingValues,
+                  enableLazyLoad: false,
+              });
+
+    adshelper.initialize();
+    window.adshelper = adshelper;
 
             adshelper.updateConfig(config);
             adshelper.displayAds(adElemsInfo);
         }
-        }
-    </script>
-    <script>
-        setTimeout(()=>{
-          const div = document.createElement('div');
-          div.setAttribute('id', 'test5');
-          div.setAttribute('class', 'prerender');
-          div.setAttribute('data-path', "/7176/NBT_MWeb/NBT_MWeb_homepage/NBT_Mweb_homepage_MREC5");
-          div.setAttribute('data-size', "[300, 250]");
-
-          document.body.appendChild(div);
-
-          const adElemsInfo =[{
-              "divId": "test5",
-              "adPath":"/7176/NBT_MWeb/NBT_MWeb_Others/NBT_Mweb_Others_MREC5",
-              "size":"[300, 250]"
-            }];
-
-        adshelper.displayAds(adElemsInfo);
-        }, 5000);
+      }, 1000);
     </script>
     <span>Testing the ads</span>
     <btn class="btn" onClick="changeAds()">Update Ad</btn>
