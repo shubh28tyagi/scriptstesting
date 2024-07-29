@@ -343,7 +343,7 @@ AdsHelper.prototype.displayAdsHB = function(adElemsInfo) {
                 adCode: adPath,
                 divId: divId,
                 name: mstype,
-                size: size,
+                size: typeof size == "string" ? JSON.parse(size) : size,
              }
 
               window.adsMapDFP[divId] = mstype;
