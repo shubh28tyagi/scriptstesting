@@ -257,7 +257,7 @@ AdsHelper.prototype.updateConfig = function(newConfig) {
     const addTargeting = newConfig.addTargeting;
     const newTargetingHB = newConfig.targetingHB;
 
-    if(!addTargeting){
+    if(!addTargeting && !newTargetingHB){
         initializeAd.clearPageLevelTargeting();
     }
     if(newConfig?.targeting){
