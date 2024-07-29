@@ -238,7 +238,7 @@ AdsHelper.prototype.initialize = function() {
      initializeAd.addPageLevelTargeting(config.targeting);
     }
     if(targetingHB){
-    initializeAd.addPageLevelTargetingHB(config.targetingHB);
+        initializeAd.addPageLevelTargetingHB(config.targetingHB);
     if (!window.adsMapDFP) {
         window.adsMapDFP = {};
       }
@@ -255,12 +255,16 @@ AdsHelper.prototype.updateConfig = function(newConfig) {
     const config = this.getConfig();
     const initializeAd = config?.adsMap.get("initialAd");
     const addTargeting = newConfig.addTargeting;
+    const newTargetingHB = newConfig.targetingHB;
 
     if(!addTargeting){
         initializeAd.clearPageLevelTargeting();
     }
     if(newConfig?.targeting){
         initializeAd.addPageLevelTargeting(newConfig.targeting);
+    }
+    if(newTargetingHB){
+        initializeAd.addPageLevelTargetingHB(newTargetingHB);
     }
     if (newConfig?.enableLazyLoad) {
         initializeAd.lazyLoadAds();
