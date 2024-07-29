@@ -99,7 +99,7 @@ AdsGenerator.prototype.addPageLevelTargeting = function(pageAttributes) {
  */
 AdsGenerator.prototype.addPageLevelTargetingHB = function(attributes) {
     if(typeof attributes == "object" && Object.keys(attributes).length>0){
-    window.Times.adsKeys = targetingObj;
+     window.Times.adsKeys = attributes;
     }
 
 };
